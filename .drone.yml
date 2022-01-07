@@ -9,11 +9,10 @@ steps:
     image: plugins/docker
     settings:
       username:
-        from_secret: cr_okok_docker_username
+        from_secret: hub_docker_username
       password:
-        from_secret: cr_okok_docker_password
-      registry: registry2.okok.dev
-      repo: registry2.okok.dev/idoge/debian11
+        from_secret: hub_docker_password
+      repo: idoge/debian11
       tags:
         - latest
         - '1.0'
