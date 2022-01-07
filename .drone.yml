@@ -1,0 +1,45 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+
+steps:
+  - name: build docker
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: cr_okok_docker_username
+      password:
+        from_secret: cr_okok_docker_password
+      registry: registry2.okok.dev
+      repo: registry2.okok.dev/idoge/debian11
+      tags:
+        - latest
+        - '1.0'
+      # 与  Dockerfile 对应
+      target: production
+
+  - name: notify-wx
+    image: lizheming/drone-wechat
+    pull: always
+    settings:
+      corpid:
+        from_secret: corpid
+      corp_secret:
+        from_secret: corp_secret
+      agent_id:
+        from_secret: agent_id
+      to_user: "@all"
+      title: >
+        {% if success %}
+        ✅ {{repo.owner}}/{{repo.name}} 第 {{build.number}} 次构建成功！
+        {% else %}
+        ❌ {{repo.owner}}/{{repo.name}} 第 {{build.number}} 次构建失败了，快来修理下吧。
+        {% endif %}
+      message: >
+          {% if success %}
+          😊主人，{{repo.owner}}/{{repo.name}}第{{build.number}}次构建成功！
+          {% else %}
+          😭主人，{{repo.owner}}/{{repo.name}}第{{build.number}}次构建失败了，快来修理下吧。
+          {% endif %}
